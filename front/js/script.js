@@ -6,25 +6,30 @@ fetch("http://localhost:3000/api/products")
     return ajoutProduits(api);
   });
 
-// déclaration variable des informations carte produit
+// fonction création carte produit
 function ajoutProduits(api) {
-  const id = api[0]._id;
-  const imageUrl = api[0].imageUrl;
-  const altTxt = api[0].altTxt;
-  const name = api[0].name;
-  const description = api[0].description;
+  // création boucle produit sur l'api
+  for (let i = 0; i < api.length; i++) {
+    // récupération données api et déclaration
+    // variable des informations carte produit
+    const id = api[i]._id;
+    const imageUrl = api[i].imageUrl;
+    const altTxt = api[i].altTxt;
+    const name = api[i].name;
+    const description = api[i].description;
 
-  // ajout des paramètres
-  const lienCarte = ajoutLien(id);
-  const article = ajoutArticle();
-  const image = ajoutImage(imageUrl, altTxt);
-  const h3 = ajoutH3(name);
-  const p = ajoutTexte(description);
+    // ajout de paramètre aux variables
+    const lienCarte = ajoutLien(id);
+    const article = document.createElement("article");
+    const image = ajoutImage(imageUrl, altTxt);
+    const h3 = ajoutH3(name);
+    const p = ajoutTexte(description);
 
-  article.appendChild(image);
-  article.appendChild(h3);
-  article.appendChild(p);
-  ajoutBalise(lienCarte, article);
+    article.appendChild(image);
+    article.appendChild(h3);
+    article.appendChild(p);
+    ajoutBalise(lienCarte, article);
+  }
 }
 
 // ajout de l'id du produit dans le lien
@@ -48,13 +53,6 @@ function ajoutImage(imageUrl, altTxt) {
   image.src = imageUrl;
   image.alt = altTxt;
   return image;
-}
-
-// ajout de la balise article
-function ajoutArticle() {
-  const article = document.createElement("article");
-  console.log(article);
-  return article;
 }
 
 // ajout de la balise h3
