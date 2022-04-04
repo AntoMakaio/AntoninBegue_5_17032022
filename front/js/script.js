@@ -25,6 +25,8 @@ function ajoutProduits(api) {
     const h3 = ajoutH3(name);
     const p = ajoutTexte(description);
 
+    // ajout de l'image, titre et description
+    // à la carte produit (article) + ajout lien et carte
     article.appendChild(image);
     article.appendChild(h3);
     article.appendChild(p);
@@ -44,7 +46,6 @@ function ajoutBalise(lienCarte, article) {
   const items = document.querySelector("#items");
   items.appendChild(lienCarte);
   lienCarte.appendChild(article);
-  console.log(items);
 }
 
 // ajout de l'image et du alt texte dans la carte produit
@@ -55,7 +56,7 @@ function ajoutImage(imageUrl, altTxt) {
   return image;
 }
 
-// ajout de la balise h3
+// ajout de la balise h3 dans la carte produit
 function ajoutH3(name) {
   const h3 = document.createElement("h3");
   h3.textContent = name;
@@ -63,7 +64,7 @@ function ajoutH3(name) {
   return h3;
 }
 
-// ajout ddu texte descrition produit
+// ajout du texte descrition dans la carte produit
 function ajoutTexte(description) {
   const p = document.createElement("p");
   p.textContent = description;
