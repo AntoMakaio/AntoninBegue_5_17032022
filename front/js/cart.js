@@ -89,9 +89,26 @@ function ajoutQuantite(settings, produit) {
   input.min = "1";
   input.max = "100";
   input.value = produit.quantity;
+  input.addEventListener("input", () =>
+    updatePriceAndQuantity(produit.id, input.value)
+  );
+
   quantite.appendChild(input);
   settings.appendChild(quantite);
 }
+
+function updatePriceAndQuantity(id, newValue) {
+  const itemToUpdate = panier.find((produit) => produit.id === id);
+  itemToUpdate.quantity = Number(newValue);
+  affichageQuantiteTotal();
+  affichagePrixTotal();
+}
+
+// function gestionQuantitePrix(id) {
+//   console.log(id);
+//   const miseAjourProduit = panier.find((produit) => produit.id === id);
+//   console.log(miseAjourProduit);
+// }
 
 function ajoutDescription(produit) {
   const description = document.createElement("div");
