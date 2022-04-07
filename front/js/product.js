@@ -2,6 +2,7 @@ const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const productId = urlParams.get("id");
 let prixProduit = 0;
+let urlImageLocal, altTxtLocal, nomProduit;
 
 fetch(`http://localhost:3000/api/products/${productId}`)
   .then((reponse) => reponse.json())
@@ -15,10 +16,13 @@ function donneeProduit(canape) {
   const description = canape.description;
   const altTxt = canape.altTxt;
   prixProduit = canape.price;
+  urlImageLocal = imageUrl;
+  altTxtLocal = altTxt;
+  nomProduit = name;
   ajoutImage(imageUrl, altTxt);
   ajoutTitre(name);
   ajoutPrix(price);
-  ajoutDescription(description);
+  ajoutContenuPanier(description);
   ajoutCouleurs(colors);
   //   console.log(canape);
 }
@@ -39,7 +43,7 @@ function ajoutPrix(price) {
   document.querySelector("#price").textContent = price;
 }
 
-function ajoutDescription(description) {
+function ajoutContenuPanier(description) {
   document.querySelector("#description").textContent = description;
 }
 
@@ -58,10 +62,15 @@ const button = document.querySelector("#addToCart");
 button.addEventListener("click", (e) => {
   const couleur = document.querySelector("#colors").value;
   const quantite = document.querySelector("#quantity").value;
-  if (couleur == null || couleur === "") {
+  if (couleur === "" && quantite == 0) {
+    alert("Choisissez une couleur et une quantité");
+    return;
+  } else if (couleur === "") {
     alert("Choisissez une couleur");
-  } else if (quantite == null || quantite == 0) {
+    return;
+  } else if (quantite == 0) {
     alert("Choisissez une quantité");
+    return;
   }
 
   const donnee = {
@@ -69,6 +78,9 @@ button.addEventListener("click", (e) => {
     price: prixProduit,
     color: couleur,
     quantity: Number(quantite),
+    imageUrl: urlImageLocal,
+    altTxt: altTxtLocal,
+    name: nomProduit,
   };
   localStorage.setItem(productId, JSON.stringify(donnee));
   window.location.href = "./cart.html";
