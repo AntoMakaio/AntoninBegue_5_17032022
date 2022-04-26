@@ -75,20 +75,26 @@ button.addEventListener("click", (e) => {
     return;
   }
 
-  //   function sauvegardeCommande(color,quantity)
+  const produitActualise = canapesStockes.find(
+    (item) => item.id === productId && item.color === couleur
+  );
 
-  // const key = `${productId}-${couleur}`;
-  const donnee = {
-    id: productId,
-    // price: prixProduit,
-    color: couleur,
-    quantity: Number(quantite),
-    // imageUrl: urlImageLocal,
-    // altTxt: altTxtLocal,
-    // name: nomProduit,
-  };
+  if (!produitActualise) {
+    const donnee = {
+      id: productId,
+      color: couleur,
+      quantity: Number(quantite),
+    };
+    canapesStockes.push(donnee);
+  } else {
+    console.log("produitActualise : ", produitActualise);
+    const quantiteActualise =
+      Number(produitActualise.quantity) + Number(quantite);
+    produitActualise.quantity = quantiteActualise;
 
-  canapesStockes.push(donnee);
+    console.log(produitActualise);
+  }
+
   localStorage.setItem("canapesStockes", JSON.stringify(canapesStockes));
   window.location.href = "./cart.html";
 });

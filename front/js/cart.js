@@ -9,8 +9,6 @@ function recuperationDesCanapes() {
 }
 
 async function recuperationCache() {
-  // const nombreArticle = canapesStockes.length;
-  // for (let i = 0; i < nombreArticle; i++) {
   let canapesLocalStorage = JSON.parse(localStorage.getItem("canapesStockes"));
 
   // utilisation de la propriete await (requete donc attente de réponse)
@@ -47,7 +45,7 @@ function affichageQuantiteTotal() {
 
   //transforme l'array panier en une seule valeur total
   const total = panier.reduce((total, produit) => total + produit.quantity, 0);
-  console.log(panier);
+  console.log(total);
   quantiteTotal.textContent = total;
 }
 
@@ -71,7 +69,6 @@ function ajoutContenuPanier(produit) {
   elementProduit.appendChild(description);
   elementProduit.appendChild(settings);
   return elementProduit;
-  //   elementProduit.appendChild(settings)
 }
 
 function ajoutSettings(produit) {
@@ -99,10 +96,9 @@ function suppressionProduit(produit) {
     (item) => item.id === produit.id && item.color === produit.color
   );
   panier.splice(suppressionProduit, 1);
-  console.log(panier);
   affichageQuantiteTotal();
   affichagePrixTotal();
-  suppressionDonneePanier(produit);
+  sauvegardePanier();
   suppressionArticlePagePanier(produit);
 }
 
@@ -127,34 +123,26 @@ function ajoutQuantite(settings, produit) {
   input.max = "100";
   input.value = produit.quantity;
   input.addEventListener("input", () =>
-    gestionQuantitePrix(produit.id, input.value, produit)
+    gestionQuantitePrix(input.value, produit)
   );
 
   quantite.appendChild(input);
   settings.appendChild(quantite);
 }
 
-function gestionQuantitePrix(id, nouvelleValeur, produit) {
-  const produitActualise = panier.find((produit) => produit.id === id);
+function gestionQuantitePrix(nouvelleValeur, produit) {
+  const produitActualise = panier.find(
+    (item) => item.id === produit.id && item.color === produit.color
+  );
   produitActualise.quantity = Number(nouvelleValeur);
   produit.quantity = produitActualise.quantity;
   affichageQuantiteTotal();
   affichagePrixTotal();
-  sauvegardePanier(produit);
+  sauvegardePanier();
 }
 
-// je retire la clé produit du local storage après validation du formulaire
-function suppressionDonneePanier(produit) {
-  const key = `${produit.id}-${produit.color}`;
-  console.log("", key);
-  localStorage.removeItem(key);
-}
-
-function sauvegardePanier(produit) {
-  //   console.log(produit);
-  const sauvegardeDonnee = JSON.stringify(produit);
-  const key = `${produit.id}-${produit.color}`;
-  localStorage.setItem(key, sauvegardeDonnee);
+function sauvegardePanier() {
+  localStorage.setItem("canapesStockes", JSON.stringify(panier));
 }
 
 function ajoutDescription(produit) {
