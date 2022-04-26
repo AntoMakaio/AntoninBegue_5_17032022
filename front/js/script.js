@@ -1,4 +1,6 @@
-//Récupération données de l'API
+// Récupération données de l'API avec fetch
+// Permet d'exécuter des requêtes HTTP (type GET) sans avoir besoin de recharger la page du navigateur
+// retour format JSON (JavaScript Object Notation)
 fetch("http://localhost:3000/api/products")
   .then((reponse) => reponse.json())
   .then((api) => {
@@ -6,7 +8,7 @@ fetch("http://localhost:3000/api/products")
     return ajoutProduits(api);
   });
 
-// fonction création carte produit
+// fonction création de la carte produit
 function ajoutProduits(api) {
   // création boucle produit sur l'api
   for (let i = 0; i < api.length; i++) {
@@ -41,7 +43,7 @@ function ajoutLien(id) {
   return lienCarte;
 }
 
-//ajout du lien et de la carte produit
+//foncction ajout du lien et de la carte produit
 function ajoutBalise(lienCarte, article) {
   const items = document.querySelector("#items");
   items.appendChild(lienCarte);

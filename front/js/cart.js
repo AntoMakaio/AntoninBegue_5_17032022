@@ -1,19 +1,34 @@
 const panier = [];
+let prixProduit = 0;
+let urlImageLocal, altTxtLocal, nomProduit;
+// requete vers l'API, recuperation de tous les produits
+function recuperationDesCanapes() {
+  return fetch(`http://localhost:3000/api/products/`)
+    .then((reponse) => reponse.json())
+    .then((api) => (tousLesCanapes = api));
+}
+
+async function recuperationCache() {
+  // const nombreArticle = canapesStockes.length;
+  // for (let i = 0; i < nombreArticle; i++) {
+  let canapesLocalStorage = JSON.parse(localStorage.getItem("canapesStockes"));
+
+  // utilisation de la propriete await (requete donc attente de réponse)
+  let canapesAPI = await recuperationDesCanapes();
+  // je fais une boucle sur les canape du localStorage
+  canapesLocalStorage.forEach(function (canape) {
+    // Je récupere le position du canape dans l'index avec la propriete findIndex
+    const canapIndex = canapesAPI.findIndex((item) => item._id === canape.id);
+
+    const canapeAGarder = Object.assign(canape, canapesAPI[canapIndex]);
+
+    panier.push(canapeAGarder);
+  });
+  // }
+  panier.forEach((produit) => ajoutProduit(produit));
+}
 
 recuperationCache();
-
-console.log(panier);
-
-panier.forEach((produit) => ajoutProduit(produit));
-
-function recuperationCache() {
-  const nombreArticle = localStorage.length;
-  for (let i = 0; i < nombreArticle; i++) {
-    const produit = localStorage.getItem(localStorage.key(i));
-    const objetProduit = JSON.parse(produit);
-    panier.push(objetProduit);
-  }
-}
 
 function ajoutProduit(produit) {
   const article = ajoutArticle(produit);
@@ -32,6 +47,7 @@ function affichageQuantiteTotal() {
 
   //transforme l'array panier en une seule valeur total
   const total = panier.reduce((total, produit) => total + produit.quantity, 0);
+  console.log(panier);
   quantiteTotal.textContent = total;
 }
 
@@ -63,17 +79,38 @@ function ajoutSettings(produit) {
   settings.classList.add("cart__item__content__settings");
 
   ajoutQuantite(settings, produit);
-  ajoutSupprimer(settings);
+  ajoutSupprimer(settings, produit);
   return settings;
 }
 
-function ajoutSupprimer(settings) {
+function ajoutSupprimer(settings, produit) {
   const div = document.createElement("div");
   div.classList.add("cart__item__content__settings__delete");
+  div.addEventListener("click", () => suppressionProduit(produit));
+
   const p = document.createElement("p");
   p.textContent = "supprimer";
   div.appendChild(p);
   settings.appendChild(div);
+}
+
+function suppressionProduit(produit) {
+  const suppressionProduit = panier.findIndex(
+    (item) => item.id === produit.id && item.color === produit.color
+  );
+  panier.splice(suppressionProduit, 1);
+  console.log(panier);
+  affichageQuantiteTotal();
+  affichagePrixTotal();
+  suppressionDonneePanier(produit);
+  suppressionArticlePagePanier(produit);
+}
+
+function suppressionArticlePagePanier(produit) {
+  const articleSupprime = document.querySelector(
+    `article[data-id="${produit.id}"][data-color="${produit.color}"]`
+  );
+  articleSupprime.remove();
 }
 
 function ajoutQuantite(settings, produit) {
@@ -90,25 +127,35 @@ function ajoutQuantite(settings, produit) {
   input.max = "100";
   input.value = produit.quantity;
   input.addEventListener("input", () =>
-    updatePriceAndQuantity(produit.id, input.value)
+    gestionQuantitePrix(produit.id, input.value, produit)
   );
 
   quantite.appendChild(input);
   settings.appendChild(quantite);
 }
 
-function updatePriceAndQuantity(id, newValue) {
-  const itemToUpdate = panier.find((produit) => produit.id === id);
-  itemToUpdate.quantity = Number(newValue);
+function gestionQuantitePrix(id, nouvelleValeur, produit) {
+  const produitActualise = panier.find((produit) => produit.id === id);
+  produitActualise.quantity = Number(nouvelleValeur);
+  produit.quantity = produitActualise.quantity;
   affichageQuantiteTotal();
   affichagePrixTotal();
+  sauvegardePanier(produit);
 }
 
-// function gestionQuantitePrix(id) {
-//   console.log(id);
-//   const miseAjourProduit = panier.find((produit) => produit.id === id);
-//   console.log(miseAjourProduit);
-// }
+// je retire la clé produit du local storage après validation du formulaire
+function suppressionDonneePanier(produit) {
+  const key = `${produit.id}-${produit.color}`;
+  console.log("", key);
+  localStorage.removeItem(key);
+}
+
+function sauvegardePanier(produit) {
+  //   console.log(produit);
+  const sauvegardeDonnee = JSON.stringify(produit);
+  const key = `${produit.id}-${produit.color}`;
+  localStorage.setItem(key, sauvegardeDonnee);
+}
 
 function ajoutDescription(produit) {
   const description = document.createElement("div");
@@ -153,4 +200,89 @@ function ajoutImage(produit) {
   div.appendChild(image);
 
   return div;
+}
+
+// $$$$$$$$ FORMULAIRE $$$$$$$$
+
+const boutonFormulaire = document.querySelector("#order");
+boutonFormulaire.addEventListener("click", (e) => envoiFormulaire(e));
+
+function envoiFormulaire(e) {
+  e.preventDefault();
+  if (panier.length === 0) {
+    alert("Sélectionnez un produit");
+    return;
+  }
+
+  if (formulaireInvalide()) return;
+  if (emailInvalide()) return;
+
+  const pagePanier = requette();
+  fetch("http://localhost:3000/api/products/order", {
+    method: "POST",
+    body: JSON.stringify(pagePanier),
+    headers: {
+      "content-Type": "application/json",
+    },
+  })
+    .then((reponse) => reponse.json())
+    .then((donnee) => {
+      const orderId = donnee.orderId;
+
+      window.location.href = "./confirmation.html" + "?orderId=" + orderId;
+    });
+}
+
+function formulaireInvalide() {
+  const formulaire = document.querySelector(".cart__order__form");
+  const inputs = Array.from(formulaire.querySelectorAll("input:required"));
+  const isInvalide = inputs.every((input) => input.value !== "");
+  if (!isInvalide) {
+    alert("Remplissez tout les champs du fomulaire");
+    return true;
+  }
+  return false;
+}
+
+function emailInvalide() {
+  const email = document.querySelector("#email").value;
+  const regex =
+    /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  if (regex.test(email) === false) {
+    alert("Entrez une adresse email valide");
+    return true;
+  }
+  return false;
+}
+
+function requette() {
+  const formulaire = document.querySelector(".cart__order__form");
+  const firstName = formulaire.elements.firstName.value;
+  const lastName = formulaire.elements.lastName.value;
+  const address = formulaire.elements.address.value;
+  const city = formulaire.elements.city.value;
+  const email = formulaire.elements.email.value;
+  const pagePanier = {
+    contact: {
+      firstName: firstName,
+      lastName: lastName,
+      address: address,
+      city: city,
+      email: email,
+    },
+    products: recuperationIds(),
+  };
+  console.log(pagePanier);
+  return pagePanier;
+}
+
+function recuperationIds() {
+  const nombreProduit = localStorage.length;
+  const ids = [];
+  for (let i = 0; i < nombreProduit; i++) {
+    const key = localStorage.key(i);
+    const id = key.split("-")[0];
+    ids.push(id);
+  }
+  return ids;
 }

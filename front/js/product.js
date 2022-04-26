@@ -58,6 +58,8 @@ function ajoutCouleurs(colors) {
 }
 
 const button = document.querySelector("#addToCart");
+let canapesStockes = JSON.parse(localStorage.getItem("canapesStockes"));
+if (!canapesStockes) [(canapesStockes = [])];
 
 button.addEventListener("click", (e) => {
   const couleur = document.querySelector("#colors").value;
@@ -73,15 +75,20 @@ button.addEventListener("click", (e) => {
     return;
   }
 
+  //   function sauvegardeCommande(color,quantity)
+
+  // const key = `${productId}-${couleur}`;
   const donnee = {
     id: productId,
-    price: prixProduit,
+    // price: prixProduit,
     color: couleur,
     quantity: Number(quantite),
-    imageUrl: urlImageLocal,
-    altTxt: altTxtLocal,
-    name: nomProduit,
+    // imageUrl: urlImageLocal,
+    // altTxt: altTxtLocal,
+    // name: nomProduit,
   };
-  localStorage.setItem(productId, JSON.stringify(donnee));
+
+  canapesStockes.push(donnee);
+  localStorage.setItem("canapesStockes", JSON.stringify(canapesStockes));
   window.location.href = "./cart.html";
 });
