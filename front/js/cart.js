@@ -211,6 +211,10 @@ function envoiFormulaire(e) {
     return;
   }
   if (formulaireInvalide()) return;
+  if (inputPrenomInvalide()) return;
+  if (inputNomInvalide()) return;
+  if (inputAdresseInvalide()) return;
+  if (inputVilleInvalide()) return;
   if (emailInvalide()) return;
 
   // j'envoi la requete POST au back-end
@@ -267,6 +271,47 @@ function formulaireInvalide() {
   const isInvalide = inputs.every((input) => input.value !== "");
   if (!isInvalide) {
     alert("Remplissez tout les champs du fomulaire");
+    return true;
+  }
+  return false;
+}
+
+function inputPrenomInvalide() {
+  const inputText = document.querySelector("#firstName").value;
+  // regex de validation des caratères speciaux, espaces et tiret maximum caractère 31 et pas sensible à la casse
+  const regex = /^[a-záàâäãåçéèêëíìîïñóòôöõúùûüýÿæœ\s-]{1,31}$/i;
+  if (regex.test(inputText) === false) {
+    alert("Entrez un Prénom valide");
+    return true;
+  }
+  return false;
+}
+
+function inputNomInvalide() {
+  const inputText = document.querySelector("#lastName").value;
+  const regex = /^[a-záàâäãåçéèêëíìîïñóòôöõúùûüýÿæœ\s-]{1,31}$/i;
+  if (regex.test(inputText) === false) {
+    alert("Entrez un Nom valide");
+    return true;
+  }
+  return false;
+}
+
+function inputAdresseInvalide() {
+  const inputText = document.querySelector("#address").value;
+  const regex = /^[a-z0-9áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœ\s-]{1,60}$/i;
+  if (regex.test(inputText) === false) {
+    alert("Entrez une adresse valide");
+    return true;
+  }
+  return false;
+}
+
+function inputVilleInvalide() {
+  const inputText = document.querySelector("#city").value;
+  const regex = /^[a-záàâäãåçéèêëíìîïñóòôöõúùûüýÿæœ\s-]{1,31}$/i;
+  if (regex.test(inputText) === false) {
+    alert("Entrez un nom de ville valide");
     return true;
   }
   return false;

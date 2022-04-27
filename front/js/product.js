@@ -24,7 +24,6 @@ function donneeProduit(canape) {
   ajoutPrix(price);
   ajoutContenuPanier(description);
   ajoutCouleurs(colors);
-  //   console.log(canape);
 }
 
 function ajoutImage(imageUrl, altTxt) {

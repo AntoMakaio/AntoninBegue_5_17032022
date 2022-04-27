@@ -17,5 +17,3 @@ function suppressionCache() {
   const cache = window.localStorage;
   cache.clear();
 }
-
-// console.log(orderId);
