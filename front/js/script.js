@@ -4,7 +4,7 @@
 fetch("http://localhost:3000/api/products")
   .then((reponse) => reponse.json())
   .then((api) => {
-    console.log(api);
+    // console.log(api);
     return ajoutProduits(api);
   });
 
@@ -36,14 +36,14 @@ function ajoutProduits(api) {
   }
 }
 
-// ajout de l'id du produit dans le lien
+// fonction ajout de l'id du produit dans le lien
 function ajoutLien(id) {
   const lienCarte = document.createElement("a");
   lienCarte.href = "./product.html?id=" + id;
   return lienCarte;
 }
 
-//foncction ajout du lien et de la carte produit
+//fonction ajout du lien et de la carte produit
 function ajoutBalise(lienCarte, article) {
   const items = document.querySelector("#items");
   items.appendChild(lienCarte);

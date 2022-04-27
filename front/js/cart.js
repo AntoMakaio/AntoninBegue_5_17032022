@@ -10,7 +10,9 @@ function recuperationDesCanapes() {
 
 async function recuperationCache() {
   let canapesLocalStorage = JSON.parse(localStorage.getItem("canapesStockes"));
-
+  if (!canapesLocalStorage) {
+    return;
+  }
   // utilisation de la propriete await (requete donc attente de réponse)
   let canapesAPI = await recuperationDesCanapes();
   // je fais une boucle sur les canape du localStorage
@@ -122,9 +124,14 @@ function ajoutQuantite(settings, produit) {
   input.min = "1";
   input.max = "100";
   input.value = produit.quantity;
-  input.addEventListener("input", () =>
-    gestionQuantitePrix(input.value, produit)
-  );
+  input.addEventListener("change", () => {
+    const quantite = input.value;
+    if (quantite == 0 || quantite < 0 || quantite > 100) {
+      alert("Choisissez un nombre d'article entre 1 et 100");
+      return;
+    }
+    gestionQuantitePrix(quantite, produit);
+  });
 
   quantite.appendChild(input);
   settings.appendChild(quantite);
@@ -134,6 +141,7 @@ function gestionQuantitePrix(nouvelleValeur, produit) {
   const produitActualise = panier.find(
     (item) => item.id === produit.id && item.color === produit.color
   );
+
   produitActualise.quantity = Number(nouvelleValeur);
   produit.quantity = produitActualise.quantity;
   affichageQuantiteTotal();
@@ -193,13 +201,19 @@ function ajoutImage(produit) {
 // $$$$$$$$ FORMULAIRE $$$$$$$$
 
 const boutonFormulaire = document.querySelector("#order");
+// au clic sur le bouton commander j'envoi le formualaire avec la fonction envoiFormulaire()
 boutonFormulaire.addEventListener("click", (e) => envoiFormulaire(e));
 
 function envoiFormulaire(e) {
   e.preventDefault();
-  if (panier.length === 0) alert("Sélectionnez un produit");
+  if (panier.length === 0) {
+    alert("Sélectionnez un produit");
+    return;
+  }
   if (formulaireInvalide()) return;
   if (emailInvalide()) return;
+
+  // j'envoi la requete POST au back-end
   const pagePanier = requette();
   fetch("http://localhost:3000/api/products/order", {
     method: "POST",
@@ -223,6 +237,8 @@ function requette() {
   const address = formulaire.elements.address.value;
   const city = formulaire.elements.city.value;
   const email = formulaire.elements.email.value;
+
+  // en-tête de la requete
   const pagePanier = {
     contact: {
       firstName: firstName,
@@ -233,11 +249,15 @@ function requette() {
     },
     products: recuperationIds(),
   };
+  console.log(pagePanier);
   return pagePanier;
 }
 
 function recuperationIds() {
   const ids = [];
+  panier.forEach(function (elt) {
+    ids.push(elt.id);
+  });
   return ids;
 }
 

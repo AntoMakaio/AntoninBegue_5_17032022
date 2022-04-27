@@ -70,8 +70,8 @@ button.addEventListener("click", (e) => {
   } else if (couleur === "") {
     alert("Choisissez une couleur");
     return;
-  } else if (quantite == 0) {
-    alert("Choisissez une quantité");
+  } else if (quantite == 0 || quantite < 0 || quantite > 100) {
+    alert("Choisissez un nombre d'article entre 1 et 100");
     return;
   }
 
