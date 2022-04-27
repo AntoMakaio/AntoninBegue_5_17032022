@@ -10,7 +10,7 @@ function recuperationId() {
 
 function ajoutNumeroCommande(orderId) {
   const numeroCommande = document.getElementById("orderId");
-  numeroCommande.textContent = orderId;
+  numeroCommande.innerHTML = `<br/><br/>${orderId}<br/><p>Merci pour votre achat<br/><br/>À bientôt !</p>`;
 }
 
 function suppressionCache() {

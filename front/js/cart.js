@@ -1,16 +1,27 @@
 const panier = [];
 let prixProduit = 0;
 let urlImageLocal, altTxtLocal, nomProduit;
-// requete vers l'API, recuperation de tous les produits
+
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+requete vers l'API, recuperation des données de tous les produits
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+
 function recuperationDesCanapes() {
   return fetch(`http://localhost:3000/api/products/`)
     .then((reponse) => reponse.json())
     .then((api) => (tousLesCanapes = api));
 }
 
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+description
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+
 async function recuperationCache() {
   let canapesLocalStorage = JSON.parse(localStorage.getItem("canapesStockes"));
   if (!canapesLocalStorage) {
+    document.querySelector("#totalQuantity").innerHTML = "0";
+    document.querySelector("#totalPrice").innerHTML = "0";
+    document.querySelector("h1").innerHTML = "Votre panier est vide";
     return;
   }
   // utilisation de la propriete await (requete donc attente de réponse)
@@ -30,6 +41,10 @@ async function recuperationCache() {
 
 recuperationCache();
 
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+description
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+
 function ajoutProduit(produit) {
   const article = ajoutArticle(produit);
   const divImage = ajoutImage(produit);
@@ -42,6 +57,10 @@ function ajoutProduit(produit) {
   affichagePrixTotal();
 }
 
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+description
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+
 function affichageQuantiteTotal() {
   const quantiteTotal = document.querySelector("#totalQuantity");
 
@@ -50,6 +69,10 @@ function affichageQuantiteTotal() {
   // console.log(total);
   quantiteTotal.textContent = total;
 }
+
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+description
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
 
 function affichagePrixTotal() {
   const prixTotal = document.querySelector("#totalPrice");
@@ -62,6 +85,10 @@ function affichagePrixTotal() {
   prixTotal.textContent = total;
 }
 
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+description
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+
 function ajoutContenuPanier(produit) {
   const elementProduit = document.createElement("div");
   elementProduit.classList.add("cart__item__content");
@@ -73,6 +100,10 @@ function ajoutContenuPanier(produit) {
   return elementProduit;
 }
 
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+description
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+
 function ajoutSettings(produit) {
   const settings = document.createElement("div");
   settings.classList.add("cart__item__content__settings");
@@ -81,6 +112,10 @@ function ajoutSettings(produit) {
   ajoutSupprimer(settings, produit);
   return settings;
 }
+
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+description
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
 
 function ajoutSupprimer(settings, produit) {
   const div = document.createElement("div");
@@ -93,6 +128,10 @@ function ajoutSupprimer(settings, produit) {
   settings.appendChild(div);
 }
 
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+description
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+
 function suppressionProduit(produit) {
   const suppressionProduit = panier.findIndex(
     (item) => item.id === produit.id && item.color === produit.color
@@ -104,12 +143,20 @@ function suppressionProduit(produit) {
   suppressionArticlePagePanier(produit);
 }
 
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+description
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+
 function suppressionArticlePagePanier(produit) {
   const articleSupprime = document.querySelector(
     `article[data-id="${produit.id}"][data-color="${produit.color}"]`
   );
   articleSupprime.remove();
 }
+
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+description
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
 
 function ajoutQuantite(settings, produit) {
   const quantite = document.createElement("div");
@@ -137,6 +184,10 @@ function ajoutQuantite(settings, produit) {
   settings.appendChild(quantite);
 }
 
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+description
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+
 function gestionQuantitePrix(nouvelleValeur, produit) {
   const produitActualise = panier.find(
     (item) => item.id === produit.id && item.color === produit.color
@@ -149,9 +200,17 @@ function gestionQuantitePrix(nouvelleValeur, produit) {
   sauvegardePanier();
 }
 
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+description
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+
 function sauvegardePanier() {
   localStorage.setItem("canapesStockes", JSON.stringify(panier));
 }
+
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+description
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
 
 function ajoutDescription(produit) {
   const description = document.createElement("div");
@@ -173,9 +232,17 @@ function ajoutDescription(produit) {
   return description;
 }
 
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+description
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+
 function affichageArticle(article) {
   document.querySelector("#cart__items").appendChild(article);
 }
+
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+description
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
 
 function ajoutArticle(produit) {
   const article = document.createElement("article");
@@ -185,6 +252,10 @@ function ajoutArticle(produit) {
 
   return article;
 }
+
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+description
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
 
 function ajoutImage(produit) {
   const div = document.createElement("div");
@@ -198,11 +269,15 @@ function ajoutImage(produit) {
   return div;
 }
 
-// $$$$$$$$ FORMULAIRE $$$$$$$$
+//- - - - - - - FORMULAIRE - - - - - - - - - - - - - -
 
 const boutonFormulaire = document.querySelector("#order");
 // au clic sur le bouton commander j'envoi le formualaire avec la fonction envoiFormulaire()
 boutonFormulaire.addEventListener("click", (e) => envoiFormulaire(e));
+
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+description
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
 
 function envoiFormulaire(e) {
   e.preventDefault();
@@ -234,6 +309,10 @@ function envoiFormulaire(e) {
     });
 }
 
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+description
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+
 function requette() {
   const formulaire = document.querySelector(".cart__order__form");
   const firstName = formulaire.elements.firstName.value;
@@ -257,6 +336,10 @@ function requette() {
   return pagePanier;
 }
 
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+description
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+
 function recuperationIds() {
   const ids = [];
   panier.forEach(function (elt) {
@@ -264,6 +347,10 @@ function recuperationIds() {
   });
   return ids;
 }
+
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+description
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
 
 function formulaireInvalide() {
   const formulaire = document.querySelector(".cart__order__form");
@@ -276,139 +363,80 @@ function formulaireInvalide() {
   return false;
 }
 
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+description
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+
 function inputPrenomInvalide() {
-  const inputText = document.querySelector("#firstName").value;
-  // regex de validation des caratères speciaux, espaces et tiret maximum caractère 31 et pas sensible à la casse
+  const prenom = document.querySelector("#firstName").value;
+  // regex de validation des caratères speciaux
+  // espaces et tiret maximum caractère 31 et pas sensible à la casse
   const regex = /^[a-záàâäãåçéèêëíìîïñóòôöõúùûüýÿæœ\s-]{1,31}$/i;
-  if (regex.test(inputText) === false) {
-    alert("Entrez un Prénom valide");
+  if (regex.test(prenom) === false) {
+    document.querySelector("#firstNameErrorMsg").style.color = "white";
+    firstNameErrorMsg.textContent = "❌ - Votre prénom n'est pas valide";
     return true;
   }
   return false;
 }
+
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+description
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
 
 function inputNomInvalide() {
-  const inputText = document.querySelector("#lastName").value;
+  const nom = document.querySelector("#lastName").value;
   const regex = /^[a-záàâäãåçéèêëíìîïñóòôöõúùûüýÿæœ\s-]{1,31}$/i;
-  if (regex.test(inputText) === false) {
-    alert("Entrez un Nom valide");
+  if (regex.test(nom) === false) {
+    document.querySelector("#lastNameErrorMsg").style.color = "white";
+    lastNameErrorMsg.textContent = "❌ - Votre nom n'est pas valide";
     return true;
   }
   return false;
 }
+
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+description
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
 
 function inputAdresseInvalide() {
-  const inputText = document.querySelector("#address").value;
+  const adresse = document.querySelector("#address").value;
   const regex = /^[a-z0-9áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœ\s-]{1,60}$/i;
-  if (regex.test(inputText) === false) {
-    alert("Entrez une adresse valide");
+  if (regex.test(adresse) === false) {
+    document.querySelector("#addressErrorMsg").style.color = "white";
+    addressErrorMsg.textContent = "❌ - Entrez une adresse valide";
     return true;
   }
   return false;
 }
 
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+description
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+
 function inputVilleInvalide() {
-  const inputText = document.querySelector("#city").value;
+  const ville = document.querySelector("#city").value;
   const regex = /^[a-záàâäãåçéèêëíìîïñóòôöõúùûüýÿæœ\s-]{1,31}$/i;
-  if (regex.test(inputText) === false) {
-    alert("Entrez un nom de ville valide");
+  if (regex.test(ville) === false) {
+    document.querySelector("#cityErrorMsg").style.color = "white";
+    cityErrorMsg.textContent = "❌ - Entrez un nom de ville valide";
     return true;
   }
   return false;
 }
+
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+description
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
 
 function emailInvalide() {
   const email = document.querySelector("#email").value;
   const regex =
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   if (regex.test(email) === false) {
-    alert("Entrez une adresse email valide");
+    document.querySelector("#emailErrorMsg").style.color = "white";
+    emailErrorMsg.textContent = "❌ - Entrez une adresse email valide";
     return true;
   }
   return false;
 }
-
-//--------------------------------
-
-// const boutonFormulaire = document.querySelector("#order");
-// boutonFormulaire.addEventListener("click", (e) => envoiFormulaire(e));
-
-// function envoiFormulaire(e) {
-//   e.preventDefault();
-//   if (panier.length === 0) {
-//     alert("Sélectionnez un produit");
-//     return;
-//   }
-
-//   if (formulaireInvalide()) return;
-//   if (emailInvalide()) return;
-
-//   const pagePanier = requette();
-//   fetch("http://localhost:3000/api/products/order", {
-//     method: "POST",
-//     body: JSON.stringify(pagePanier),
-//     headers: {
-//       "content-Type": "application/json",
-//     },
-//   })
-//     .then((reponse) => reponse.json())
-//     .then((donnee) => {
-//       const orderId = donnee.orderId;
-
-//       window.location.href = "./confirmation.html" + "?orderId=" + orderId;
-//     });
-// }
-
-// function formulaireInvalide() {
-//   const formulaire = document.querySelector(".cart__order__form");
-//   const inputs = Array.from(formulaire.querySelectorAll("input:required"));
-//   const isInvalide = inputs.every((input) => input.value !== "");
-//   if (!isInvalide) {
-//     alert("Remplissez tout les champs du fomulaire");
-//     return true;
-//   }
-//   return false;
-// }
-
-// function emailInvalide() {
-//   const email = document.querySelector("#email").value;
-//   const regex =
-//     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-//   if (regex.test(email) === false) {
-//     alert("Entrez une adresse email valide");
-//     return true;
-//   }
-//   return false;
-// }
-
-// function requette() {
-//   const formulaire = document.querySelector(".cart__order__form");
-//   const firstName = formulaire.elements.firstName.value;
-//   const lastName = formulaire.elements.lastName.value;
-//   const address = formulaire.elements.address.value;
-//   const city = formulaire.elements.city.value;
-//   const email = formulaire.elements.email.value;
-//   const pagePanier = {
-//     contact: {
-//       firstName: firstName,
-//       lastName: lastName,
-//       address: address,
-//       city: city,
-//       email: email,
-//     },
-//     products: recuperationIds(),
-//   };
-//   console.log(pagePanier);
-//   return pagePanier;
-// }
-
-// function recuperationIds() {
-//   const nombreProduit = localStorage.length;
-//   const ids = [];
-//   for (let i = 0; i < nombreProduit; i++) {
-//     const key = localStorage.key(i);
-//     const id = key.split("-")[0];
-//     ids.push(id);
-//   }
-//   return ids;
-// }
