@@ -4,11 +4,13 @@
 fetch("http://localhost:3000/api/products")
   .then((reponse) => reponse.json())
   .then((api) => {
-    // console.log(api);
     return ajoutProduits(api);
   });
 
-// fonction création de la carte produit
+/**
+ * Je créer les cartes produit avec une boucle for sur les données de l'API
+ * @param {Object} api
+ */
 function ajoutProduits(api) {
   // création boucle produit sur l'api
   for (let i = 0; i < api.length; i++) {
@@ -36,21 +38,32 @@ function ajoutProduits(api) {
   }
 }
 
-// fonction ajout de l'id du produit dans le lien
+/**
+ * fonction ajout de l'id du produit dans le lien de la carte produit
+ * @param {string} id
+ */
 function ajoutLien(id) {
   const lienCarte = document.createElement("a");
   lienCarte.href = "./product.html?id=" + id;
   return lienCarte;
 }
 
-//fonction ajout du lien et de la carte produit
+/**
+ * J'ajoute le lien de la carte et la carte produit
+ * @param {Object} lienCarte
+ * @param {Object} article
+ */
 function ajoutBalise(lienCarte, article) {
   const items = document.querySelector("#items");
   items.appendChild(lienCarte);
   lienCarte.appendChild(article);
 }
 
-// ajout de l'image et du alt texte dans la carte produit
+/**
+ * J'ajoute l'image et le alt texte dans la carte produit
+ * @param {string} imageUrl
+ * @param {string} altTxt
+ */
 function ajoutImage(imageUrl, altTxt) {
   const image = document.createElement("img");
   image.src = imageUrl;
@@ -58,7 +71,10 @@ function ajoutImage(imageUrl, altTxt) {
   return image;
 }
 
-// ajout de la balise h3 dans la carte produit
+/**
+ * J'ajoute la balise h3 dans la carte produit
+ * @param {string} name
+ */
 function ajoutH3(name) {
   const h3 = document.createElement("h3");
   h3.textContent = name;
@@ -66,7 +82,10 @@ function ajoutH3(name) {
   return h3;
 }
 
-// ajout du texte descrition dans la carte produit
+/**
+ * J'ajoute le texte description dans la carte produit
+ * @param {string} description
+ */
 function ajoutTexte(description) {
   const p = document.createElement("p");
   p.textContent = description;

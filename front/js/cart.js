@@ -2,20 +2,18 @@ const panier = [];
 let prixProduit = 0;
 let urlImageLocal, altTxtLocal, nomProduit;
 
-/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-requete vers l'API, recuperation des données de tous les produits
-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
-
+/**
+ * requete vers l'API, recuperation des données de tous les produits
+ */
 function recuperationDesCanapes() {
   return fetch(`http://localhost:3000/api/products/`)
     .then((reponse) => reponse.json())
     .then((api) => (tousLesCanapes = api));
 }
 
-/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-description
-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
-
+/**
+ * description
+ */
 async function recuperationCache() {
   let canapesLocalStorage = JSON.parse(localStorage.getItem("canapesStockes"));
   if (!canapesLocalStorage) {
@@ -41,10 +39,10 @@ async function recuperationCache() {
 
 recuperationCache();
 
-/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-description
-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
-
+/**
+ * description
+ * @param {Object} produit
+ */
 function ajoutProduit(produit) {
   const article = ajoutArticle(produit);
   const divImage = ajoutImage(produit);
@@ -57,23 +55,20 @@ function ajoutProduit(produit) {
   affichagePrixTotal();
 }
 
-/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-description
-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
-
+/**
+ * description
+ */
 function affichageQuantiteTotal() {
   const quantiteTotal = document.querySelector("#totalQuantity");
 
   //transforme l'array panier en une seule valeur total
   const total = panier.reduce((total, produit) => total + produit.quantity, 0);
-  // console.log(total);
   quantiteTotal.textContent = total;
 }
 
-/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-description
-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
-
+/**
+ * description
+ */
 function affichagePrixTotal() {
   const prixTotal = document.querySelector("#totalPrice");
 
@@ -85,10 +80,10 @@ function affichagePrixTotal() {
   prixTotal.textContent = total;
 }
 
-/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-description
-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
-
+/**
+ * description
+ * @param {Object} produit
+ */
 function ajoutContenuPanier(produit) {
   const elementProduit = document.createElement("div");
   elementProduit.classList.add("cart__item__content");
@@ -100,10 +95,10 @@ function ajoutContenuPanier(produit) {
   return elementProduit;
 }
 
-/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-description
-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
-
+/**
+ * description
+ * @param {Object} produit
+ */
 function ajoutSettings(produit) {
   const settings = document.createElement("div");
   settings.classList.add("cart__item__content__settings");
@@ -113,10 +108,11 @@ function ajoutSettings(produit) {
   return settings;
 }
 
-/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-description
-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
-
+/**
+ * description
+ * @param {Object} settings
+ * @param {Object} produit
+ */
 function ajoutSupprimer(settings, produit) {
   const div = document.createElement("div");
   div.classList.add("cart__item__content__settings__delete");
@@ -128,10 +124,10 @@ function ajoutSupprimer(settings, produit) {
   settings.appendChild(div);
 }
 
-/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-description
-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
-
+/**
+ * description
+ * @param {Object} produit
+ */
 function suppressionProduit(produit) {
   const suppressionProduit = panier.findIndex(
     (item) => item.id === produit.id && item.color === produit.color
@@ -143,10 +139,10 @@ function suppressionProduit(produit) {
   suppressionArticlePagePanier(produit);
 }
 
-/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-description
-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
-
+/**
+ * description
+ @param {Object} produit
+*/
 function suppressionArticlePagePanier(produit) {
   const articleSupprime = document.querySelector(
     `article[data-id="${produit.id}"][data-color="${produit.color}"]`
@@ -154,10 +150,11 @@ function suppressionArticlePagePanier(produit) {
   articleSupprime.remove();
 }
 
-/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-description
-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
-
+/**
+ * description
+ * @param {Object} settings
+ * @param {Object} produit
+ */
 function ajoutQuantite(settings, produit) {
   const quantite = document.createElement("div");
   quantite.classList.add("cart__item__content__settings__quantity");
@@ -184,15 +181,15 @@ function ajoutQuantite(settings, produit) {
   settings.appendChild(quantite);
 }
 
-/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-description
-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
-
+/**
+ * description
+ * @param {string} nouvelleValeur
+ * @param {Object} produit
+ */
 function gestionQuantitePrix(nouvelleValeur, produit) {
   const produitActualise = panier.find(
     (item) => item.id === produit.id && item.color === produit.color
   );
-
   produitActualise.quantity = Number(nouvelleValeur);
   produit.quantity = produitActualise.quantity;
   affichageQuantiteTotal();
@@ -200,18 +197,17 @@ function gestionQuantitePrix(nouvelleValeur, produit) {
   sauvegardePanier();
 }
 
-/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-description
-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
-
+/**
+ * description
+ */
 function sauvegardePanier() {
   localStorage.setItem("canapesStockes", JSON.stringify(panier));
 }
 
-/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-description
-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
-
+/**
+ * description
+ * @param {Object} produit
+ */
 function ajoutDescription(produit) {
   const description = document.createElement("div");
   description.classList.add("card__item__content__description");
@@ -232,18 +228,18 @@ function ajoutDescription(produit) {
   return description;
 }
 
-/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-description
-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
-
+/**
+ * description
+ * @param {Object} article
+ */
 function affichageArticle(article) {
   document.querySelector("#cart__items").appendChild(article);
 }
 
-/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-description
-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
-
+/**
+ * description
+ * @param {Object} produit
+ */
 function ajoutArticle(produit) {
   const article = document.createElement("article");
   article.classList.add("cart__item");
@@ -253,10 +249,10 @@ function ajoutArticle(produit) {
   return article;
 }
 
-/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-description
-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
-
+/**
+ * description
+ * @param {Object} produit
+ */
 function ajoutImage(produit) {
   const div = document.createElement("div");
   div.classList.add("cart__item__img");
@@ -275,16 +271,20 @@ const boutonFormulaire = document.querySelector("#order");
 // au clic sur le bouton commander j'envoi le formualaire avec la fonction envoiFormulaire()
 boutonFormulaire.addEventListener("click", (e) => envoiFormulaire(e));
 
-/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-description
-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
-
+/**
+ * Je valide le panier et le formulaire avant avant l'envoi de la commande
+ * @param {Object} e
+ */
 function envoiFormulaire(e) {
   e.preventDefault();
+  // je met une alerte au cas ou le panier est vide
+  // lors du clic sur le bouton commander
   if (panier.length === 0) {
     alert("Sélectionnez un produit");
     return;
   }
+
+  // je vérifie que chaques champs du formulaire n'est pas invalide
   if (formulaireInvalide()) return;
   if (inputPrenomInvalide()) return;
   if (inputNomInvalide()) return;
@@ -304,15 +304,14 @@ function envoiFormulaire(e) {
     .then((reponse) => reponse.json())
     .then((donnee) => {
       const orderId = donnee.orderId;
-
+      // je transmet l'orderId renvoyé par l'API avec l'url à la page confirmation
       window.location.href = "./confirmation.html" + "?orderId=" + orderId;
     });
 }
 
-/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-description
-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
-
+/**
+ * Envoi de la requette à l'API avec les valeurs du formulaire pour obtention de l'orderId
+ */
 function requette() {
   const formulaire = document.querySelector(".cart__order__form");
   const firstName = formulaire.elements.firstName.value;
@@ -332,14 +331,12 @@ function requette() {
     },
     products: recuperationIds(),
   };
-  console.log(pagePanier);
   return pagePanier;
 }
 
-/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-description
-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
-
+/**
+ * Je récupère les différents id du localStorage pour les envoyer au back-end
+ */
 function recuperationIds() {
   const ids = [];
   panier.forEach(function (elt) {
@@ -348,10 +345,9 @@ function recuperationIds() {
   return ids;
 }
 
-/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-description
-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
-
+/**
+ * Je verifie que tous les input ayant le paramètre "required" sont renseignés
+ */
 function formulaireInvalide() {
   const formulaire = document.querySelector(".cart__order__form");
   const inputs = Array.from(formulaire.querySelectorAll("input:required"));
@@ -363,10 +359,9 @@ function formulaireInvalide() {
   return false;
 }
 
-/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-description
-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
-
+/**
+ * Je verifie que le prenom est valide avec une regex spécifique
+ */
 function inputPrenomInvalide() {
   const prenom = document.querySelector("#firstName").value;
   // regex de validation des caratères speciaux
@@ -374,68 +369,64 @@ function inputPrenomInvalide() {
   const regex = /^[a-záàâäãåçéèêëíìîïñóòôöõúùûüýÿæœ\s-]{1,31}$/i;
   if (regex.test(prenom) === false) {
     document.querySelector("#firstNameErrorMsg").style.color = "white";
-    firstNameErrorMsg.textContent = "❌ - Votre prénom n'est pas valide";
+    firstNameErrorMsg.textContent = "Votre prénom n'est pas valide";
     return true;
   }
   return false;
 }
 
-/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-description
-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
-
+/**
+ * Je verifie que le nom est valide avec une regex spécifique
+ */
 function inputNomInvalide() {
   const nom = document.querySelector("#lastName").value;
   const regex = /^[a-záàâäãåçéèêëíìîïñóòôöõúùûüýÿæœ\s-]{1,31}$/i;
   if (regex.test(nom) === false) {
     document.querySelector("#lastNameErrorMsg").style.color = "white";
-    lastNameErrorMsg.textContent = "❌ - Votre nom n'est pas valide";
+    lastNameErrorMsg.textContent = "Votre nom n'est pas valide";
     return true;
   }
   return false;
 }
 
-/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-description
-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
-
+/**
+ * Je verifie que l'adresse est valide avec une regex spécifique
+ */
 function inputAdresseInvalide() {
   const adresse = document.querySelector("#address").value;
   const regex = /^[a-z0-9áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœ\s-]{1,60}$/i;
   if (regex.test(adresse) === false) {
     document.querySelector("#addressErrorMsg").style.color = "white";
-    addressErrorMsg.textContent = "❌ - Entrez une adresse valide";
+    addressErrorMsg.textContent = "Entrez une adresse valide";
     return true;
   }
   return false;
 }
 
-/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-description
-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
-
+/**
+ * Je verifie que la ville est valide avec une regex spécifique
+ */
 function inputVilleInvalide() {
   const ville = document.querySelector("#city").value;
   const regex = /^[a-záàâäãåçéèêëíìîïñóòôöõúùûüýÿæœ\s-]{1,31}$/i;
   if (regex.test(ville) === false) {
     document.querySelector("#cityErrorMsg").style.color = "white";
-    cityErrorMsg.textContent = "❌ - Entrez un nom de ville valide";
+    cityErrorMsg.textContent = "Entrez un nom de ville valide";
     return true;
   }
   return false;
 }
 
-/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-description
-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
-
+/**
+ * Je verifie que l'email est valide avec une regex spécifique
+ */
 function emailInvalide() {
   const email = document.querySelector("#email").value;
   const regex =
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   if (regex.test(email) === false) {
     document.querySelector("#emailErrorMsg").style.color = "white";
-    emailErrorMsg.textContent = "❌ - Entrez une adresse email valide";
+    emailErrorMsg.textContent = "Entrez une adresse email valide";
     return true;
   }
   return false;
