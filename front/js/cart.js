@@ -1,3 +1,5 @@
+// je déclare les variables globales
+
 const panier = [];
 let prixProduit = 0;
 let urlImageLocal, altTxtLocal, nomProduit;
@@ -8,39 +10,46 @@ let urlImageLocal, altTxtLocal, nomProduit;
 function recuperationDesCanapes() {
   return fetch(`http://localhost:3000/api/products/`)
     .then((reponse) => reponse.json())
-    .then((api) => (tousLesCanapes = api));
+    .then((api) => (tousLesCanapes = api))
+    .catch((erreur) => {
+      document.querySelector("h1").innerHTML = "<h1>erreur 404</h1>";
+      console.log("Erreur d'API :" + erreur);
+    });
 }
-
 /**
- * description
+ * Je recupère les données des canapes de manière croisé avec le localStorage et l'API
  */
 async function recuperationCache() {
   let canapesLocalStorage = JSON.parse(localStorage.getItem("canapesStockes"));
+
+  // si le localStorage est vide, quantie et prix 0 et affichage texte panier vide
   if (!canapesLocalStorage) {
     document.querySelector("#totalQuantity").innerHTML = "0";
     document.querySelector("#totalPrice").innerHTML = "0";
     document.querySelector("h1").innerHTML = "Votre panier est vide";
     return;
   }
-  // utilisation de la propriete await (requete donc attente de réponse)
+  // utilisation de la propriete await (requete fetch sur recuperationDesCanapes donc attente de réponse)
   let canapesAPI = await recuperationDesCanapes();
-  // je fais une boucle sur les canape du localStorage
+  // je fais une boucle sur les canapes du localStorage
   canapesLocalStorage.forEach(function (canape) {
-    // Je récupere le position du canape dans l'index avec la propriete findIndex
+    // Je récupere la position du canape dans l'index de l'API avec la propriete findIndex et
+    // recupere les donnees si l'id des canapes de l'API correspond à l'id des canapes du localStorage
     const canapIndex = canapesAPI.findIndex((item) => item._id === canape.id);
-
+    // je garde les canapes qui correspondent entre l'API et le localStorage et je fusionne les donnees des objet avec Object.assign
     const canapeAGarder = Object.assign(canape, canapesAPI[canapIndex]);
-
+    // je push les donnees dans le panier
     panier.push(canapeAGarder);
   });
-  // }
+
+  // j'affiche tout les elements avec la boucle forEach
   panier.forEach((produit) => ajoutProduit(produit));
 }
-
 recuperationCache();
+// console.log("PANIER :", panier);
 
 /**
- * description
+ * J'ajoute les produits dans le panier
  * @param {Object} produit
  */
 function ajoutProduit(produit) {
@@ -56,7 +65,7 @@ function ajoutProduit(produit) {
 }
 
 /**
- * description
+ * Je calcul la quantité total à afficher
  */
 function affichageQuantiteTotal() {
   const quantiteTotal = document.querySelector("#totalQuantity");
@@ -67,12 +76,12 @@ function affichageQuantiteTotal() {
 }
 
 /**
- * description
+ * Je calcul le prix total à afficher
  */
 function affichagePrixTotal() {
   const prixTotal = document.querySelector("#totalPrice");
 
-  //transforme l'array panier en une seule valeur total
+  //je transforme l'array panier en une seule valeur total
   const total = panier.reduce(
     (total, produit) => total + produit.price * produit.quantity,
     0
@@ -81,7 +90,7 @@ function affichagePrixTotal() {
 }
 
 /**
- * description
+ * J'ajoute une div avec la class .cart__item__content dans laquelle j'affcihe la description et ses paramètres
  * @param {Object} produit
  */
 function ajoutContenuPanier(produit) {
@@ -96,7 +105,7 @@ function ajoutContenuPanier(produit) {
 }
 
 /**
- * description
+ * J'ajoute aux paramètres la quantité et le bouton supprimer
  * @param {Object} produit
  */
 function ajoutSettings(produit) {
@@ -109,7 +118,7 @@ function ajoutSettings(produit) {
 }
 
 /**
- * description
+ * Je créer le bouton supprimer avec une div et un addEventListener qui joue la fonction suppressionProduit() au clic
  * @param {Object} settings
  * @param {Object} produit
  */
@@ -125,13 +134,17 @@ function ajoutSupprimer(settings, produit) {
 }
 
 /**
- * description
+ * Je créer la fonction suppressionProduit avec un findIndex sur l'id et la couleur
+ *
  * @param {Object} produit
  */
 function suppressionProduit(produit) {
   const suppressionProduit = panier.findIndex(
     (item) => item.id === produit.id && item.color === produit.color
   );
+
+  // avec .splice je supprime des éléments du tableau panier puis j'affiche les informations mis à jours,
+  // je sauvegarde le panier dans le localStorage et supprime la div du produit cliqué
   panier.splice(suppressionProduit, 1);
   affichageQuantiteTotal();
   affichagePrixTotal();
@@ -140,7 +153,7 @@ function suppressionProduit(produit) {
 }
 
 /**
- * description
+ * Je supprime la div du produit cliqué qui à un id et une couleur identique
  @param {Object} produit
 */
 function suppressionArticlePagePanier(produit) {
@@ -151,7 +164,7 @@ function suppressionArticlePagePanier(produit) {
 }
 
 /**
- * description
+ * J'ajoute la quantité sur chaque produit avec un mini 1 et maxi 100, si autre afficher message erreur
  * @param {Object} settings
  * @param {Object} produit
  */
@@ -174,6 +187,7 @@ function ajoutQuantite(settings, produit) {
       alert("Choisissez un nombre d'article entre 1 et 100");
       return;
     }
+    // une fois la quantité ajouté, j'affiche la quantité et le prix total du panier
     gestionQuantitePrix(quantite, produit);
   });
 
@@ -182,7 +196,7 @@ function ajoutQuantite(settings, produit) {
 }
 
 /**
- * description
+ * Je créer une fonction pour actualiser les produit dans le panier et afficher les nouvelles données prix, quantité
  * @param {string} nouvelleValeur
  * @param {Object} produit
  */
@@ -198,14 +212,14 @@ function gestionQuantitePrix(nouvelleValeur, produit) {
 }
 
 /**
- * description
+ * fonction de sauvegarde du panier dans le localStorage
  */
 function sauvegardePanier() {
   localStorage.setItem("canapesStockes", JSON.stringify(panier));
 }
 
 /**
- * description
+ * Je créer la fonction d'ajout de description du produit avec le nom la couleur et le prix
  * @param {Object} produit
  */
 function ajoutDescription(produit) {
@@ -229,7 +243,7 @@ function ajoutDescription(produit) {
 }
 
 /**
- * description
+ * Je créer la fonction d'affichage des articles dans la page panier
  * @param {Object} article
  */
 function affichageArticle(article) {
@@ -237,7 +251,7 @@ function affichageArticle(article) {
 }
 
 /**
- * description
+ * Je fais la fonction qui créer l'article suivant l'id du produit et sa couleur
  * @param {Object} produit
  */
 function ajoutArticle(produit) {
@@ -250,7 +264,7 @@ function ajoutArticle(produit) {
 }
 
 /**
- * description
+ * Je créer la fonction qui ajoute l'image du produit grâce à son url et ajoute son altTxt
  * @param {Object} produit
  */
 function ajoutImage(produit) {
@@ -272,7 +286,7 @@ const boutonFormulaire = document.querySelector("#order");
 boutonFormulaire.addEventListener("click", (e) => envoiFormulaire(e));
 
 /**
- * Je valide le panier et le formulaire avant avant l'envoi de la commande
+ * Je valide le panier et le formulaire avant l'envoi de la commande
  * @param {Object} e
  */
 function envoiFormulaire(e) {
@@ -364,11 +378,11 @@ function formulaireInvalide() {
  */
 function inputPrenomInvalide() {
   const prenom = document.querySelector("#firstName").value;
+  firstNameErrorMsg.textContent = "";
   // regex de validation des caratères speciaux
   // espaces et tiret maximum caractère 31 et pas sensible à la casse
   const regex = /^[a-záàâäãåçéèêëíìîïñóòôöõúùûüýÿæœ\s-]{1,31}$/i;
   if (regex.test(prenom) === false) {
-    document.querySelector("#firstNameErrorMsg").style.color = "white";
     firstNameErrorMsg.textContent = "Votre prénom n'est pas valide";
     return true;
   }
@@ -380,9 +394,9 @@ function inputPrenomInvalide() {
  */
 function inputNomInvalide() {
   const nom = document.querySelector("#lastName").value;
+  lastNameErrorMsg.textContent = "";
   const regex = /^[a-záàâäãåçéèêëíìîïñóòôöõúùûüýÿæœ\s-]{1,31}$/i;
   if (regex.test(nom) === false) {
-    document.querySelector("#lastNameErrorMsg").style.color = "white";
     lastNameErrorMsg.textContent = "Votre nom n'est pas valide";
     return true;
   }
@@ -394,9 +408,10 @@ function inputNomInvalide() {
  */
 function inputAdresseInvalide() {
   const adresse = document.querySelector("#address").value;
+  addressErrorMsg.textContent = "";
+
   const regex = /^[a-z0-9áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœ\s-]{1,60}$/i;
   if (regex.test(adresse) === false) {
-    document.querySelector("#addressErrorMsg").style.color = "white";
     addressErrorMsg.textContent = "Entrez une adresse valide";
     return true;
   }
@@ -408,9 +423,10 @@ function inputAdresseInvalide() {
  */
 function inputVilleInvalide() {
   const ville = document.querySelector("#city").value;
+  cityErrorMsg.textContent = "";
+
   const regex = /^[a-záàâäãåçéèêëíìîïñóòôöõúùûüýÿæœ\s-]{1,31}$/i;
   if (regex.test(ville) === false) {
-    document.querySelector("#cityErrorMsg").style.color = "white";
     cityErrorMsg.textContent = "Entrez un nom de ville valide";
     return true;
   }
@@ -422,10 +438,11 @@ function inputVilleInvalide() {
  */
 function emailInvalide() {
   const email = document.querySelector("#email").value;
+  emailErrorMsg.textContent = "";
+
   const regex =
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   if (regex.test(email) === false) {
-    document.querySelector("#emailErrorMsg").style.color = "white";
     emailErrorMsg.textContent = "Entrez une adresse email valide";
     return true;
   }

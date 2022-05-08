@@ -5,6 +5,10 @@ fetch("http://localhost:3000/api/products")
   .then((reponse) => reponse.json())
   .then((api) => {
     return ajoutProduits(api);
+  })
+  .catch((erreur) => {
+    document.querySelector(".titles").innerHTML = "<h1>erreur 404</h1>";
+    console.log("Erreur d'API :" + erreur);
   });
 
 /**
@@ -39,7 +43,7 @@ function ajoutProduits(api) {
 }
 
 /**
- * fonction ajout de l'id du produit dans le lien de la carte produit
+ * J'ajoute l'id du produit dans le lien de la carte produit
  * @param {string} id
  */
 function ajoutLien(id) {
@@ -72,7 +76,7 @@ function ajoutImage(imageUrl, altTxt) {
 }
 
 /**
- * J'ajoute la balise h3 dans la carte produit
+ * J'ajoute la balise h3 (productName) dans la carte produit
  * @param {string} name
  */
 function ajoutH3(name) {

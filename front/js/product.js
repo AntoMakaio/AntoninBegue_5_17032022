@@ -7,10 +7,14 @@ const productId = urlParams.get("id");
 let prixProduit = 0;
 let urlImageLocal, altTxtLocal, nomProduit;
 
-// Je récupère les données de l'API avec fetch
+// Je récupère les données de l'API pour le produit selectionné (productId) avec fetch
 fetch(`http://localhost:3000/api/products/${productId}`)
   .then((reponse) => reponse.json())
-  .then((api) => donneeProduit(api));
+  .then((api) => donneeProduit(api))
+  .catch((erreur) => {
+    document.querySelector(".item").innerHTML = "<h1>erreur 404</h1>";
+    console.log("Erreur d'API :" + erreur);
+  });
 
 /**
  * J'affiche sur la page le produit retourné par l'API
@@ -35,7 +39,7 @@ function donneeProduit(canape) {
 }
 
 /**
- * description
+ * Je créer la fonction qui ajoute l'image grâce à son url et ajoute son altTxt récupéré de l'API
  * @param {string} imageUrl
  * @param {string} altTxt
  */
@@ -48,7 +52,7 @@ function ajoutImage(imageUrl, altTxt) {
 }
 
 /**
- * description
+ * Je créer la fonction qui ajoute le titre avec le nom récupéré de l'API
  * @param {string} name
  */
 function ajoutTitre(name) {
@@ -56,7 +60,7 @@ function ajoutTitre(name) {
 }
 
 /**
- * description
+ * Je créer la fonction qui ajoute le prix
  * @param {number} price
  */
 function ajoutPrix(price) {
@@ -72,7 +76,7 @@ function ajoutContenuPanier(description) {
 }
 
 /**
- * description
+ * Je créer la fonction qui ajoute les couleurs possibles du produit retourné par l'API
  * @param {object} colors
  */
 function ajoutCouleurs(colors) {
@@ -86,15 +90,12 @@ function ajoutCouleurs(colors) {
   });
 }
 
-/**
- * description
- */
 const button = document.querySelector("#addToCart");
 let canapesStockes = JSON.parse(localStorage.getItem("canapesStockes"));
 if (!canapesStockes) [(canapesStockes = [])];
 
 /**
- * description
+ * Je créer les vérifications necessaires avant l'envoi des données dans le localStorage
  */
 button.addEventListener("click", (e) => {
   const couleur = document.querySelector("#colors").value;
@@ -109,11 +110,11 @@ button.addEventListener("click", (e) => {
     alert("Choisissez un nombre d'article entre 1 et 100");
     return;
   }
-
+  // je créer la fonction de vérification sur l'ajout de produit identique
   const produitActualise = canapesStockes.find(
     (item) => item.id === productId && item.color === couleur
   );
-
+  // si les données sont différentes de celle déjà présentent on les envoies
   if (!produitActualise) {
     const donnee = {
       id: productId,
@@ -122,11 +123,13 @@ button.addEventListener("click", (e) => {
     };
     canapesStockes.push(donnee);
   } else {
+    //  sinon je l'incrémente de la quantité
     const quantiteActualise =
       Number(produitActualise.quantity) + Number(quantite);
     produitActualise.quantity = quantiteActualise;
   }
 
+  // je redirige ensuite vers la page panier avec les données dans le local storage
   localStorage.setItem("canapesStockes", JSON.stringify(canapesStockes));
   window.location.href = "./cart.html";
 });

@@ -3,7 +3,7 @@ ajoutNumeroCommande(orderId);
 suppressionCache();
 
 /**
- * Je récupère l'orderId avec l'url de la page cart.js
+ * Je récupère l'orderId avec l'url envoyé de la page cart.js
  */
 function recuperationId() {
   const queryString = window.location.search;
