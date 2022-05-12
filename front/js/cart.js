@@ -148,7 +148,7 @@ function suppressionProduit(produit) {
   panier.splice(suppressionProduit, 1);
   affichageQuantiteTotal();
   affichagePrixTotal();
-  sauvegardePanier();
+  sauvegardePanier(produit);
   suppressionArticlePagePanier(produit);
 }
 
@@ -208,14 +208,24 @@ function gestionQuantitePrix(nouvelleValeur, produit) {
   produit.quantity = produitActualise.quantity;
   affichageQuantiteTotal();
   affichagePrixTotal();
-  sauvegardePanier();
+  sauvegardePanier(produitActualise);
 }
 
 /**
  * fonction de sauvegarde du panier dans le localStorage
  */
-function sauvegardePanier() {
-  localStorage.setItem("canapesStockes", JSON.stringify(panier));
+function sauvegardePanier(produit) {
+  const donneesStockes = JSON.parse(localStorage.getItem("canapesStockes"));
+
+  donneesStockes.forEach(function (item) {
+    const index = donneesStockes.findIndex(
+      (item) => item.id === produit.id && item.color === produit.color
+    );
+
+    donneesStockes[index].quantity = produit.quantity;
+
+    localStorage.setItem("canapesStockes", JSON.stringify(donneesStockes));
+  });
 }
 
 /**

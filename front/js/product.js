@@ -97,7 +97,7 @@ if (!canapesStockes) [(canapesStockes = [])];
 /**
  * Je créer les vérifications necessaires avant l'envoi des données dans le localStorage
  */
-button.addEventListener("click", (e) => {
+button.addEventListener("click", () => {
   const couleur = document.querySelector("#colors").value;
   const quantite = document.querySelector("#quantity").value;
   if (couleur === "" && quantite == 0) {
