@@ -149,6 +149,7 @@ function suppressionProduit(produit) {
   affichageQuantiteTotal();
   affichagePrixTotal();
   sauvegardePanier(produit);
+  suppressionDansPanier(produit);
   suppressionArticlePagePanier(produit);
 }
 
@@ -226,6 +227,15 @@ function sauvegardePanier(produit) {
 
     localStorage.setItem("canapesStockes", JSON.stringify(donneesStockes));
   });
+}
+function suppressionDansPanier(produit) {
+  const donneesStockes = JSON.parse(localStorage.getItem("canapesStockes"));
+
+  const result = donneesStockes.filter(
+    (item) => item.id !== produit.id && item.color !== produit.color
+  );
+
+  localStorage.setItem("canapesStockes", JSON.stringify(result));
 }
 
 /**
