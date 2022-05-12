@@ -148,7 +148,6 @@ function suppressionProduit(produit) {
   panier.splice(suppressionProduit, 1);
   affichageQuantiteTotal();
   affichagePrixTotal();
-  sauvegardePanier(produit);
   suppressionDansPanier(produit);
   suppressionArticlePagePanier(produit);
 }
@@ -217,16 +216,11 @@ function gestionQuantitePrix(nouvelleValeur, produit) {
  */
 function sauvegardePanier(produit) {
   const donneesStockes = JSON.parse(localStorage.getItem("canapesStockes"));
-
-  donneesStockes.forEach(function (item) {
-    const index = donneesStockes.findIndex(
-      (item) => item.id === produit.id && item.color === produit.color
-    );
-
-    donneesStockes[index].quantity = produit.quantity;
-
-    localStorage.setItem("canapesStockes", JSON.stringify(donneesStockes));
-  });
+  const index = donneesStockes.findIndex(
+    (item) => item.id === produit.id && item.color === produit.color
+  );
+  donneesStockes[index].quantity = produit.quantity;
+  localStorage.setItem("canapesStockes", JSON.stringify(donneesStockes));
 }
 function suppressionDansPanier(produit) {
   const donneesStockes = JSON.parse(localStorage.getItem("canapesStockes"));
